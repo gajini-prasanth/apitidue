@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Boost - Aptitude Practice Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+        
+        .game-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .game-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .category-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .category-btn {
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #495057;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .category-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .question-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        .question-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #495057;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .chart-table th,
+        .chart-table td {
+            padding: 12px;
+            text-align: center;
+            border: 2px solid #dee2e6;
+        }
+        
+        .chart-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .chart-table td {
+            background: #f8f9fa;
+        }
+        
+        .clock-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .clock {
+            width: 200px;
+            height: 200px;
+            border: 8px solid #495057;
+            border-radius: 50%;
+            position: relative;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .clock-center {
+            width: 12px;
+            height: 12px;
+            background: #495057;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+        
+        .clock-hand {
+            position: absolute;
+            background: #495057;
+            transform-origin: bottom center;
+            border-radius: 2px;
+        }
+        
+        .hour-hand {
+            width: 4px;
+            height: 60px;
+            top: 40px;
+            left: 50%;
+            margin-left: -2px;
+        }
+        
+        .minute-hand {
+            width: 2px;
+            height: 80px;
+            top: 20px;
+            left: 50%;
+            margin-left: -1px;
+        }
+        
+        .clock-numbers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .clock-number {
+            position: absolute;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #495057;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .option-btn {
+            padding: 15px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .option-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .option-btn.correct {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        .option-btn.wrong {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            border-color: #f44336;
+        }
+        
+        .option-btn.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        
+        .message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .message.info {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1976d2;
+        }
+        
+        .message.success {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            color: #388e3c;
+        }
+        
+        .message.error {
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            color: #d32f2f;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+            }
+            
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .category-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .clock {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .hour-hand {
+                height: 45px;
+                top: 30px;
+            }
+            
+            .minute-hand {
+                height: 60px;
+                top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">Mind Boost</h1>
+        <p class="game-subtitle">Aptitude Practice Game</p>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">Score</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Correct</div>
+                <div class="stat-value" id="correct">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Total</div>
+                <div class="stat-value" id="total">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Accuracy</div>
+                <div class="stat-value" id="accuracy">0%</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress" style="width: 0%"></div>
+        </div>
+        
+        <div class="message info" id="message">
+            Choose a category to start practicing!
+        </div>
+        
+        <div class="category-selector">
+            <button class="category-btn" data-category="data">📊 Data Interpretation</button>
+            <button class="category-btn" data-category="clocks">🕐 Clocks</button>
+            <button class="category-btn" data-category="oddman">🔍 Odd Man Out</button>
+            <button class="category-btn" data-category="interest">💰 Simple Interest</button>
+            <button class="category-btn" data-category="logical">🧠 Logical Reasoning</button>
+            <button class="category-btn" data-category="blood">👨‍👩‍👧‍👦 Blood Relations</button>
+            <button class="category-btn" data-category="direction">🧭 Direction Sense</button>
+            <button class="category-btn" data-category="partnership">🤝 Partnership</button>
+        </div>
+        
+        <div class="question-container" id="questionContainer">
+            <div class="question-title" id="questionTitle"></div>
+            <div class="question-text" id="questionText"></div>
+            <div id="questionContent"></div>
+            <div class="options-container" id="optionsContainer"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="nextBtn" style="display: none;">Next Question</button>
+            <button class="btn btn-secondary" id="resetBtn">Reset Score</button>
+        </div>
+    </div>
+
+    <script>
+        class AptitudeGame {
+            constructor() {
+                this.score = 0;
+                this.correct = 0;
+                this.total = 0;
+                this.currentCategory = null;
+                this.currentQuestion = null;
+                this.selectedAnswer = null;
+                
+                this.initializeElements();
+                this.attachEventListeners();
+                this.updateStats();
+            }
+            
+            initializeElements() {
+                this.scoreEl = document.getElementById('score');
+                this.correctEl = document.getElementById('correct');
+                this.totalEl = document.getElementById('total');
+                this.accuracyEl = document.getElementById('accuracy');
+                this.progressEl = document.getElementById('progress');
+                this.messageEl = document.getElementById('message');
+                this.questionContainer = document.getElementById('questionContainer');
+                this.questionTitle = document.getElementById('questionTitle');
+                this.questionText = document.getElementById('questionText');
+                this.questionContent = document.getElementById('questionContent');
+                this.optionsContainer = document.getElementById('optionsContainer');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.categoryBtns = document.querySelectorAll('.category-btn');
+            }
+            
+            attachEventListeners() {
+                this.categoryBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => this.selectCategory(e.target.dataset.category));
+                });
+                
+                this.nextBtn.addEventListener('click', () => this.nextQuestion());
+                this.resetBtn.addEventListener('click', () => this.resetGame());
+            }
+            
+            selectCategory(category) {
+                this.currentCategory = category;
+                
+                // Update category button styles
+                this.categoryBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.category === category);
+                });
+                
+                this.nextQuestion();
+            }
+            
+            nextQuestion() {
+                if (!this.currentCategory) return;
+                
+                this.selectedAnswer = null;
+                this.nextBtn.style.display = 'none';
+                this.questionContainer.classList.add('active');
+                
+                // Generate question based on category
+                switch (this.currentCategory) {
+                    case 'data':
+                        this.generateDataQuestion();
+                        break;
+                    case 'clocks':
+                        this.generateClockQuestion();
+                        break;
+                    case 'oddman':
+                        this.generateOddManQuestion();
+                        break;
+                    case 'interest':
+                        this.generateInterestQuestion();
+                        break;
+                    case 'logical':
+                        this.generateLogicalQuestion();
+                        break;
+                    case 'blood':
+                        this.generateBloodRelationQuestion();
+                        break;
+                    case 'direction':
+                        this.generateDirectionQuestion();
+                        break;
+                    case 'partnership':
+                        this.generatePartnershipQuestion();
+                        break;
+                }
+                
+                this.messageEl.textContent = 'Select your answer';
+                this.messageEl.className = 'message info';
+            }
+            
+            generateDataQuestion() {
+                const questions = [
+                    // Sales & Revenue Analysis (1-25)
+                    {
+                        title: "Sales Data Analysis",
+                        text: "Study the following sales data for different products:",
+                        data: {
+                            headers: ["Product", "Q1", "Q2", "Q3", "Q4"],
+                            rows: [
+                                ["Laptops", "120", "150", "180", "200"],
+                                ["Phones", "300", "280", "320", "350"],
+                                ["Tablets", "80", "90", "100", "110"]
+                            ]
+                        },
+                        question: "Which product had the highest total sales across all quarters?",
+                        options: ["Laptops (650)", "Phones (1250)", "Tablets (380)", "All Equal"],
+                        correct: 1
+                    },
+                    {
+                        title: "Revenue Analysis",
+                        text: "Monthly revenue data for a company:",
+                        data: {
+                            headers: ["Month", "Revenue (₹)"],
+                            rows: [
+                                ["Jan", "50,000"],
+                                ["Feb", "45,000"],
+                                ["Mar", "60,000"],
+                                ["Apr", "55,000"]
+                            ]
+                        },
+                        question: "What is the average monthly revenue?",
+                        options: ["₹50,000", "₹52,500", "₹55,000", "₹47,500"],
+                        correct: 1
+                    },
+                    {
+                        title: "Quarterly Growth",
+                        text: "Company growth over quarters:",
+                        data: {
+                            headers: ["Quarter", "Revenue", "Growth %"],
+                            rows: [
+                                ["Q1", "100", "0%"],
+                                ["Q2", "120", "20%"],
+                                ["Q3", "144", "20%"],
+                                ["Q4", "173", "20%"]
+                            ]
+                        },
+                        question: "What is the compound growth rate?",
+                        options: ["20%", "73%", "18.5%", "25%"],
+                        correct: 0
+                    },
+                    {
+                        title: "Market Share",
+                        text: "Market share analysis:",
+                        data: {
+                            headers: ["Company", "2022", "2023", "Change"],
+                            rows: [
+                                ["A", "25%", "30%", "+5%"],
+                                ["B", "35%", "32%", "-3%"],
+                                ["C", "40%", "38%", "-2%"]
+                            ]
+                        },
+                        question: "Which company gained the most market share?",
+                        options: ["Company A", "Company B", "Company C", "All Equal"],
+                        correct: 0
+                    },
+                    {
+                        title: "Regional Sales",
+                        text: "Sales performance by region:",
+                        data: {
+                            headers: ["Region", "Target", "Achieved", "% Achievement"],
+                            rows: [
+                                ["North", "500", "550", "110%"],
+                                ["South", "400", "380", "95%"],
+                                ["East", "300", "330", "110%"],
+                                ["West", "600", "540", "90%"]
+                            ]
+                        },
+                        question: "How many regions achieved their targets?",
+                        options: ["1", "2", "3", "4"],
+                        correct: 1
+                    },
+                    
+                    // Employee & HR Data (26-50)
+                    {
+                        title: "Employee Performance",
+                        text: "Department wise employee performance:",
+                        data: {
+                            headers: ["Department", "Excellent", "Good", "Average"],
+                            rows: [
+                                ["IT", "25", "30", "15"],
+                                ["HR", "15", "20", "10"],
+                                ["Finance", "20", "25", "12"]
+                            ]
+                        },
+                        question: "Which department has the highest percentage of excellent performers?",
+                        options: ["IT (35.7%)", "HR (33.3%)", "Finance (35.1%)", "All Equal"],
+                        correct: 0
+                    },
+                    {
+                        title: "Salary Distribution",
+                        text: "Employee salary ranges:",
+                        data: {
+                            headers: ["Range", "Count", "Percentage"],
+                            rows: [
+                                ["20-30K", "40", "20%"],
+                                ["30-50K", "80", "40%"],
+                                ["50-80K", "60", "30%"],
+                                ["80K+", "20", "10%"]
+                            ]
+                        },
+                        question: "What percentage earn above 50K?",
+                        options: ["30%", "40%", "50%", "60%"],
+                        correct: 1
+                    },
+                    {
+                        title: "Attendance Analysis",
+                        text: "Monthly attendance data:",
+                        data: {
+                            headers: ["Month", "Present", "Absent", "Leave"],
+                            rows: [
+                                ["Jan", "450", "30", "20"],
+                                ["Feb", "440", "35", "25"],
+                                ["Mar", "460", "25", "15"]
+                            ]
+                        },
+                        question: "Which month had the best attendance rate?",
+                        options: ["January", "February", "March", "All Equal"],
+                        correct: 2
+                    },
+                    {
+                        title: "Training Completion",
+                        text: "Department training completion rates:",
+                        data: {
+                            headers: ["Department", "Enrolled", "Completed", "Rate"],
+                            rows: [
+                                ["Sales", "50", "45", "90%"],
+                                ["Marketing", "30", "24", "80%"],
+                                ["Operations", "40", "38", "95%"]
+                            ]
+                        },
+                        question: "Which department has the highest completion rate?",
+                        options: ["Sales", "Marketing", "Operations", "All Equal"],
+                        correct: 2
+                    },
+                    {
+                        title: "Age Demographics",
+                        text: "Employee age distribution:",
+                        data: {
+                            headers: ["Age Group", "Male", "Female", "Total"],
+                            rows: [
+                                ["20-30", "60", "40", "100"],
+                                ["30-40", "80", "70", "150"],
+                                ["40-50", "50", "30", "80"],
+                                ["50+", "20", "10", "30"]
+                            ]
+                        },
+                        question: "What is the total number of female employees?",
+                        options: ["150", "140", "160", "130"],
+                        correct: 0
+                    },
+                    
+                    // Production & Manufacturing (51-75)
+                    {
+                        title: "Production Data",
+                        text: "Factory production over 6 months:",
+                        data: {
+                            headers: ["Month", "Units Produced", "Defective"],
+                            rows: [
+                                ["Jan", "1000", "50"],
+                                ["Feb", "1200", "48"],
+                                ["Mar", "1100", "55"]
+                            ]
+                        },
+                        question: "Which month had the lowest defect rate?",
+                        options: ["January (5%)", "February (4%)", "March (5%)", "All Equal"],
+                        correct: 1
+                    },
+                    {
+                        title: "Quality Control",
+                        text: "Quality inspection results:",
+                        data: {
+                            headers: ["Product", "Tested", "Passed", "Failed"],
+                            rows: [
+                                ["A", "500", "475", "25"],
+                                ["B", "400", "392", "8"],
+                                ["C", "600", "570", "30"]
+                            ]
+                        },
+                        question: "Which product has the highest pass rate?",
+                        options: ["Product A (95%)", "Product B (98%)", "Product C (95%)", "All Equal"],
+                        correct: 1
+                    },
+                    {
+                        title: "Machine Efficiency",
+                        text: "Machine performance data:",
+                        data: {
+                            headers: ["Machine", "Uptime", "Downtime", "Efficiency"],
+                            rows: [
+                                ["M1", "22", "2", "91.7%"],
+                                ["M2", "20", "4", "83.3%"],
+                                ["M3", "23", "1", "95.8%"]
+                            ]
+                        },
+                        question: "Which machine has the best efficiency?",
+                        options: ["M1", "M2", "M3", "All Equal"],
+                        correct: 2
+                    },
+                    {
+                        title: "Shift Production",
+                        text: "Production by shifts:",
+                        data: {
+                            headers: ["Shift", "Target", "Actual", "Variance"],
+                            rows: [
+                                ["Morning", "200", "210", "+10"],
+                                ["Evening", "180", "175", "-5"],
+                                ["Night", "150", "160", "+10"]
+                            ]
+                        },
+                        question: "What is the total production variance?",
+                        options: ["+15", "+10", "+5", "+20"],
+                        correct: 0
+                    },
+                    {
+                        title: "Raw Material Usage",
+                        text: "Material consumption analysis:",
+                        data: {
+                            headers: ["Material", "Ordered", "Used", "Wastage"],
+                            rows: [
+                                ["Steel", "1000", "950", "50"],
+                                ["Plastic", "500", "480", "20"],
+                                ["Aluminum", "300", "285", "15"]
+                            ]
+                        },
+                        question: "Which material has the lowest wastage percentage?",
+                        options: ["Steel (5%)", "Plastic (4%)", "Aluminum (5%)", "All Equal"],
+                        correct: 1
+                    },
+                    
+                    // Financial Analysis (76-100)
+                    {
+                        title: "Expense Breakdown",
+                        text: "Monthly expense analysis:",
+                        data: {
+                            headers: ["Category", "Budget", "Actual", "Variance"],
+                            rows: [
+                                ["Salaries", "100000", "98000", "-2000"],
+                                ["Rent", "25000", "25000", "0"],
+                                ["Utilities", "15000", "16500", "+1500"],
+                                ["Marketing", "20000", "18000", "-2000"]
+                            ]
+                        },
+                        question: "What is the total budget variance?",
+                        options: ["-2500", "-3000", "-2000", "-1500"],
+                        correct: 0
+                    },
+                    {
+                        title: "Profit Margin Analysis",
+                        text: "Product profitability:",
+                        data: {
+                            headers: ["Product", "Revenue", "Cost", "Profit"],
+                            rows: [
+                                ["X", "50000", "35000", "15000"],
+                                ["Y", "40000", "32000", "8000"],
+                                ["Z", "60000", "42000", "18000"]
+                            ]
+                        },
+                        question: "Which product has the highest profit margin?",
+                        options: ["X (30%)", "Y (20%)", "Z (30%)", "X & Z"],
+                        correct: 3
+                    },
+                    {
+                        title: "Cash Flow Analysis",
+                        text: "Quarterly cash flow:",
+                        data: {
+                            headers: ["Quarter", "Inflow", "Outflow", "Net"],
+                            rows: [
+                                ["Q1", "150000", "120000", "30000"],
+                                ["Q2", "180000", "140000", "40000"],
+                                ["Q3", "160000", "135000", "25000"],
+                                ["Q4", "200000", "160000", "40000"]
+                            ]
+                        },
+                        question: "What is the average quarterly net cash flow?",
+                        options: ["33750", "35000", "32500", "30000"],
+                        correct: 0
+                    },
+                    {
+                        title: "Investment Returns",
+                        text: "Investment portfolio performance:",
+                        data: {
+                            headers: ["Investment", "Amount", "Return", "ROI%"],
+                            rows: [
+                                ["Stocks", "100000", "12000", "12%"],
+                                ["Bonds", "50000", "4000", "8%"],
+                                ["FD", "75000", "5250", "7%"]
+                            ]
+                        },
+                        question: "What is the weighted average return?",
+                        options: ["9.5%", "10.2%", "8.8%", "11.1%"],
+                        correct: 0
+                    },
+                    {
+                        title: "Cost Analysis",
+                        text: "Department cost breakdown:",
+                        data: {
+                            headers: ["Department", "Fixed", "Variable", "Total"],
+                            rows: [
+                                ["Production", "80000", "120000", "200000"],
+                                ["Sales", "40000", "60000", "100000"],
+                                ["Admin", "60000", "20000", "80000"]
+                            ]
+                        },
+                        question: "What percentage of total cost is variable?",
+                        options: ["52.6%", "50%", "47.4%", "55%"],
+                        correct: 0
+                    }
+                ];
+                
+                const q = questions[Math.floor(Math.random() * questions.length)];
+                this.currentQuestion = q;
+                
+                this.questionTitle.textContent = q.title;
+                this.questionText.textContent = q.text;
+                
+                // Create table
+                let tableHTML = '<div class="chart-container"><table class="chart-table">';
+                tableHTML += '<tr>';
+                q.data.headers.forEach(header => {
+                    tableHTML += `<th>${header}</th>`;
+                });
+                tableHTML += '</tr>';
+                
+                q.data.rows.forEach(row => {
+                    tableHTML += '<tr>';
+                    row.forEach(cell => {
+                        tableHTML += `<td>${cell}</td>`;
+                    });
+                    tableHTML += '</tr>';
+                });
+                tableHTML += '</table></div>';
+                tableHTML += `<p class="question-text"><strong>${q.question}</strong></p>`;
+                
+                this.questionContent.innerHTML = tableHTML;
+                this.createOptions(q.options, q.correct);
+            }
+            
+            generateClockQuestion() {
+                const questions = [
+                    // Basic Time Reading (1-25)
+                    {
+                        title: "Clock Problem",
+                        hour: 3,
+                        minute: 15,
+                        question: "What time is shown on the clock?",
+                        options: ["3:15", "3:45", "9:15", "12:15"],
+                        correct: 0
+                    },
+                    {
+                        title: "Time Reading",
+                        hour: 2,
+                        minute: 30,
+                        question: "What time does this clock show?",
+                        options: ["2:30", "2:06", "6:10", "10:30"],
+                        correct: 0
+                    },
+                    {
+                        title: "Quarter Past",
+                        hour: 7,
+                        minute: 15,
+                        question: "What time is displayed?",
+                        options: ["7:15", "7:45", "3:35", "Quarter to 8"],
+                        correct: 0
+                    },
+                    {
+                        title: "Half Past",
+                        hour: 9,
+                        minute: 30,
+                        question: "What time is shown?",
+                        options: ["9:30", "6:45", "Half past 9", "Both A & C"],
+                        correct: 3
+                    },
+                    {
+                        title: "Quarter To",
+                        hour: 11,
+                        minute: 45,
+                        question: "What time is this?",
+                        options: ["11:45", "Quarter to 12", "9:15", "Both A & B"],
+                        correct: 3
+                    },
+                    
+                    // Time Calculations (26-50)
+                    {
+                        title: "Time Calculation",
+                        hour: 6,
+                        minute: 30,
+                        question: "If this clock shows the current time, what time will it be after 2 hours 45 minutes?",
+                        options: ["8:75", "9:15", "8:15", "9:45"],
+                        correct: 1
+                    },
+                    {
+                        title: "Future Time",
+                        hour: 4,
+                        minute: 45,
+                        question: "What time will it be 3 hours 30 minutes from now?",
+                        options: ["8:15", "7:45", "8:45", "7:15"],
+                        correct: 0
+                    },
+                    {
+                        title: "Past Time",
+                        hour: 10,
+                        minute: 20,
+                        question: "What time was it 2 hours 35 minutes ago?",
+                        options: ["7:45", "8:15", "7:15", "8:45"],
+                        correct: 0
+                    },
+                    {
+                        title: "Time Addition",
+                        hour: 1,
+                        minute: 45,
+                        question: "Add 4 hours 20 minutes to this time:",
+                        options: ["6:05", "5:65", "6:15", "5:05"],
+                        correct: 0
+                    },
+                    {
+                        title: "Time Subtraction",
+                        hour: 8,
+                        minute: 25,
+                        question: "Subtract 3 hours 40 minutes from this time:",
+                        options: ["4:45", "5:15", "4:85", "5:45"],
+                        correct: 0
+                    },
+                    
+                    // Angle Problems (51-75)
+                    {
+                        title: "Angle Problem",
+                        hour: 9,
+                        minute: 0,
+                        question: "What is the angle between the hour and minute hands?",
+                        options: ["90°", "270°", "180°", "0°"],
+                        correct: 0
+                    },
+                    {
+                        title: "Angle Calculation",
+                        hour: 6,
+                        minute: 0,
+                        question: "What is the angle between the hands at this time?",
+                        options: ["180°", "90°", "270°", "0°"],
+                        correct: 0
+                    },
+                    {
+                        title: "Hand Position",
+                        hour: 12,
+                        minute: 30,
+                        question: "At this time, what is the angle between the hands?",
+                        options: ["15°", "30°", "45°", "0°"],
+                        correct: 0
+                    },
+                    {
+                        title: "3 O'Clock Angle",
+                        hour: 3,
+                        minute: 0,
+                        question: "What is the angle between hands at 3:00?",
+                        options: ["90°", "180°", "270°", "0°"],
+                        correct: 0
+                    },
+                    {
+                        title: "Right Angle Time",
+                        hour: 3,
+                        minute: 0,
+                        question: "At what times do the hands form a right angle?",
+                        options: ["3:00 & 9:00", "6:00 & 12:00", "Multiple times", "Never"],
+                        correct: 2
+                    },
+                    
+                    // Special Clock Problems (76-100)
+                    {
+                        title: "Elapsed Time",
+                        hour: 5,
+                        minute: 15,
+                        question: "How much time has passed since 2:45?",
+                        options: ["2h 30m", "3h 30m", "2h 15m", "3h 15m"],
+                        correct: 0
+                    },
+                    {
+                        title: "Mirror Time",
+                        hour: 3,
+                        minute: 0,
+                        question: "What time would this show in a mirror?",
+                        options: ["9:00", "3:00", "6:00", "12:00"],
+                        correct: 0
+                    },
+                    {
+                        title: "Clock Speed",
+                        hour: 8,
+                        minute: 0,
+                        question: "If this clock gains 5 minutes every hour, what actual time is it?",
+                        options: ["7:40", "7:55", "8:05", "7:45"],
+                        correct: 1
+                    },
+                    {
+                        title: "Slow Clock",
+                        hour: 10,
+                        minute: 30,
+                        question: "If this clock loses 10 minutes every hour, what is the actual time?",
+                        options: ["11:30", "10:40", "11:00", "10:20"],
+                        correct: 0
+                    },
+                    {
+                        title: "Clock Synchronization",
+                        hour: 7,
+                        minute: 0,
+                        question: "Two clocks show 7:00. One gains 2 min/hour, other loses 3 min/hour. After 5 hours, what's the difference?",
+                        options: ["25 minutes", "15 minutes", "20 minutes", "10 minutes"],
+                        correct: 0
+                    }
+                ];
+                
+                const q = questions[Math.floor(Math.random() * questions.length)];
+                this.currentQuestion = q;
+                
+                this.questionTitle.textContent = q.title;
+                this.questionText.textContent = "";
+                
+                // Create clock
+                const clockHTML = `
+                    <div class="clock-container">
+                        <div class="clock">
+                            <div class="clock-numbers">
+                                <div class="clock-number" style="top: 10px; left: 50%; transform: translateX(-50%);">12</div>
+                                <div class="clock-number" style="top: 50%; right: 10px; transform: translateY(-50%);">3</div>
+                                <div class="clock-number" style="bottom: 10px; left: 50%; transform: translateX(-50%);">6</div>
+                                <div class="clock-number" style="top: 50%; left: 10px; transform: translateY(-50%);">9</div>
+                            </div>
+                            <div class="clock-hand hour-hand" style="transform: rotate(${(q.hour % 12) * 30 + q.minute * 0.5}deg);"></div>
+                            <div class="clock-hand minute-hand" style="transform: rotate(${q.minute * 6}deg);"></div>
+                            <div class="clock-center"></div>
+                        </div>
+                    </div>
+                    <p class="question-text"><strong>${q.question}</strong></p>
+                `;
+                
+                this.questionContent.innerHTML = clockHTML;
+                this.createOptions(q.options, q.correct);
+            }
+            
+            generateOddManQuestion() {
+                const questions = [
+                    // Number Patterns (1-25)
+                    {
+                        title: "Number Series",
+                        text: "Find the odd one out:",
+                        series: ["2, 4, 6, 8, 9"],
+                        options: ["2", "4", "6", "9"],
+                        correct: 3,
+                        explanation: "All others are even numbers"
+                    },
+                    {
+                        title: "Prime Numbers",
+                        text: "Find the odd one out:",
+                        series: ["3, 5, 7, 9, 11"],
+                        options: ["3", "5", "7", "9"],
+                        correct: 3,
+                        explanation: "All others are prime numbers"
+                    },
+                    {
+                        title: "Perfect Squares",
+                        text: "Find the odd one out:",
+                        series: ["16, 25, 36, 48, 49"],
+                        options: ["16", "25", "36", "48"],
+                        correct: 3,
+                        explanation: "All others are perfect squares"
+                    },
+                    {
+                        title: "Cubes",
+                        text: "Find the odd one out:",
+                        series: ["8, 27, 64, 100, 125"],
+                        options: ["8", "27", "64", "100"],
+                        correct: 3,
+                        explanation: "All others are perfect cubes"
+                    },
+                    {
+                        title: "Multiples of 6",
+                        text: "Find the odd one out:",
+                        series: ["12, 18, 24, 27, 30"],
+                        options: ["12", "18", "24", "27"],
+                        correct: 3,
+                        explanation: "All others are multiples of 6"
+                    },
+                    
+                    // Letter Patterns (26-50)
+                    {
+                        title: "Letter Series",
+                        text: "Find the odd one out:",
+                        series: ["A, E, I, O, B"],
+                        options: ["A", "E", "I", "B"],
+                        correct: 3,
+                        explanation: "All others are vowels"
+                    },
+                    {
+                        title: "Consonants",
+                        text: "Find the odd one out:",
+                        series: ["B, C, D, E, F"],
+                        options: ["B", "C", "D", "E"],
+                        correct: 3,
+                        explanation: "All others are consonants"
+                    },
+                    {
+                        title: "Alphabetical Order",
+                        text: "Find the odd one out:",
+                        series: ["M, N, O, Q, P"],
+                        options: ["M", "N", "O", "Q"],
+                        correct: 3,
+                        explanation: "Q breaks the sequence"
+                    },
+                    {
+                        title: "Letter Positions",
+                        text: "Find the odd one out:",
+                        series: ["C, F, I, L, N"],
+                        options: ["C", "F", "I", "N"],
+                        correct: 3,
+                        explanation: "Pattern: +3 positions, N breaks it"
+                    },
+                    {
+                        title: "Symmetric Letters",
+                        text: "Find the odd one out:",
+                        series: ["A, H, I, M, R"],
+                        options: ["A", "H", "I", "R"],
+                        correct: 3,
+                        explanation: "All others are symmetric"
+                    },
+                    
+                    // Animals & Nature (51-75)
+                    {
+                        title: "Animals",
+                        text: "Find the odd one out:",
+                        series: ["Lion, Tiger, Elephant, Leopard"],
+                        options: ["Lion", "Tiger", "Elephant", "Leopard"],
+                        correct: 2,
+                        explanation: "All others are cats"
+                    },
+                    {
+                        title: "Birds",
+                        text: "Find the odd one out:",
+                        series: ["Eagle, Sparrow, Bat, Crow"],
+                        options: ["Eagle", "Sparrow", "Bat", "Crow"],
+                        correct: 2,
+                        explanation: "Bat is a mammal"
+                    },
+                    {
+                        title: "Fruits",
+                        text: "Find the odd one out:",
+                        series: ["Apple, Orange, Banana, Carrot"],
+                        options: ["Apple", "Orange", "Banana", "Carrot"],
+                        correct: 3,
+                        explanation: "All others are fruits"
+                    },
+                    {
+                        title: "Flowers",
+                        text: "Find the odd one out:",
+                        series: ["Rose, Jasmine, Lotus, Mango"],
+                        options: ["Rose", "Jasmine", "Lotus", "Mango"],
+                        correct: 3,
+                        explanation: "All others are flowers"
+                    },
+                    {
+                        title: "Water Animals",
+                        text: "Find the odd one out:",
+                        series: ["Fish, Whale, Shark, Frog"],
+                        options: ["Fish", "Whale", "Shark", "Frog"],
+                        correct: 3,
+                        explanation: "Frog is amphibian"
+                    },
+                    
+                    // Objects & Things (76-100)
+                    {
+                        title: "Shapes",
+                        text: "Find the odd one out:",
+                        series: ["Circle, Square, Triangle, Sphere"],
+                        options: ["Circle", "Square", "Triangle", "Sphere"],
+                        correct: 3,
+                        explanation: "All others are 2D shapes"
+                    },
+                    {
+                        title: "Colors",
+                        text: "Find the odd one out:",
+                        series: ["Red, Blue, Green, Bright"],
+                        options: ["Red", "Blue", "Green", "Bright"],
+                        correct: 3,
+                        explanation: "All others are colors"
+                    },
+                    {
+                        title: "Vehicles",
+                        text: "Find the odd one out:",
+                        series: ["Car, Bus, Train, Bicycle"],
+                        options: ["Car", "Bus", "Train", "Bicycle"],
+                        correct: 3,
+                        explanation: "Bicycle has no engine"
+                    },
+                    {
+                        title: "Metals",
+                        text: "Find the odd one out:",
+                        series: ["Gold, Silver, Copper, Wood"],
+                        options: ["Gold", "Silver", "Copper", "Wood"],
+                        correct: 3,
+                explanation: "Wood is not a metal"
+                    },
+                    {
+                        title: "Planets",
+                        text: "Find the odd one out:",
+                        series: ["Mercury, Venus, Earth, Sun"],
+                        options: ["Mercury", "Venus", "Earth", "Sun"],
+                        correct: 3,
+                        explanation: "All others are planets"
+                    }
+                ];
+                
+                const q = questions[Math.floor(Math.random() * questions.length)];
+                this.currentQuestion = q;
+                
+                this.questionTitle.textContent = q.title;
+                this.questionText.textContent = q.text;
+                
+                const seriesHTML = `
+                    <div class="chart-container">
+                        <h3 style="text-align: center; margin-bottom: 20px; font-size: 1.5rem; color: #495057;">
+                            ${q.series[0]}
+                        </h3>
+                    </div>
+                `;
+                
+                this.questionContent.innerHTML = seriesHTML;
+                this.createOptions(q.options, q.correct);
+            }
+            
+            generateInterestQuestion() {
+                const principal = [1000, 2000, 5000, 10000][Math.floor(Math.random() * 4)];
+                const rate = [5, 8, 10, 12][Math.floor(Math.random() * 4)];
+                const time = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
+                
+                const interest = (principal * rate * time) / 100;
+                const amount = principal + interest;
+                
+                const questions = [
+                    {
+                        title: "Simple Interest Calculation",
+                        text: `Calculate the Simple Interest on ₹${principal} at ${rate}% per annum for ${time} years.`,
+                        question: "What is the Simple Interest?",
+                        options: [
+                            `₹${interest}`,
+                            `₹${interest + 100}`,
+                            `₹${interest - 100}`,
+                            `₹${interest + 200}`
+                        ],
+                        correct: 0
+                    },
+                    {
+                        title: "Amount Calculation",
+                        text: `Find the Amount when ₹${principal} is invested at ${rate}% per annum for ${time} years.`,
+                        question: "What is the total Amount?",
+                        options: [
+                            `₹${amount}`,
+                            `₹${amount + 100}`,
+                            `₹${amount - 100}`,
+                            `₹${principal}`
+                        ],
+                        correct: 0
+                    }
+                ];
+                
+                const q = questions[Math.floor(Math.random() * questions.length)];
+                this.currentQuestion = q;
+                
+                this.questionTitle.textContent = q.title;
+                this.questionText.textContent = q.text;
+                
+                const formulaHTML = `
+                    <div class="chart-container">
+                        <h4 style="text-align: center; margin-bottom: 15px; color: #495057;">Formula:</h4>
+                        <p style="text-align: center; font-size: 1.1rem; margin-bottom: 15px;">
+                            <strong>Simple Interest = (P × R × T) / 100</strong>
+                        </p>
+                        <p style="text-align: center; font-size: 1.1rem;">
+                            <strong>Amount = Principal + Simple Interest</strong>
+                        </p>
+                        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <p><strong>Given:</strong></p>
+                            <p>Principal (P) = ₹${principal}</p>
+                            <p>Rate (R) = ${rate}% per annum</p>
+                            <p>Time (T) = ${time} years</p>
+                        </div>
+                    </div>
+                    <p class="question-text"><strong>${q.question}</strong></p>
+                `;
+                
+                this.questionContent.innerHTML = formulaHTML;
+                this.createOptions(q.options, q.correct);
+            }
+            
+            createOptions(options, correctIndex) {
+                this.optionsContainer.innerHTML = '';
+                
+                options.forEach((option, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = option;
+                    btn.addEventListener('click', () => this.selectAnswer(index, correctIndex));
+                    this.optionsContainer.appendChild(btn);
+                });
+            }
+            
+            selectAnswer(selectedIndex, correctIndex) {
+                if (this.selectedAnswer !== null) return;
+                
+                this.selectedAnswer = selectedIndex;
+                this.total++;
+                
+                const options = this.optionsContainer.querySelectorAll('.option-btn');
+                
+                if (selectedIndex === correctIndex) {
+                    this.correct++;
+                    this.score += 10;
+                    options[selectedIndex].classList.add('correct');
+                    this.messageEl.textContent = 'Correct! Well done! 🎉';
+                    this.messageEl.className = 'message success';
+                } else {
+                    options[selectedIndex].classList.add('wrong');
+                    options[correctIndex].classList.add('correct');
+                    this.messageEl.textContent = 'Incorrect. The correct answer is highlighted.';
+                    this.messageEl.className = 'message error';
+                }
+                
+                // Disable all options
+                options.forEach(option => {
+                    option.style.pointerEvents = 'none';
+                });
+                
+                this.updateStats();
+                this.nextBtn.style.display = 'inline-block';
+            }
+            
+            generateLogicalQuestion() {
+                const questions = [
+                    // Code Language (1-25)
+                    {
+                        title: "Logical Sequence",
+                        text: "In a certain code language:",
+                        premise: "'BOOK' is written as 'CPPL'",
+                        question: "How is 'PAGE' written in that code?",
+                        options: ["QBHF", "QBGF", "PBHF", "QCHF"],
+                        correct: 0,
+                        explanation: "Each letter is shifted by +1 position"
+                    },
+                    {
+                        title: "Code Language",
+                        text: "In a code language:",
+                        premise: "'CAT' is written as 'DBU'",
+                        question: "How is 'DOG' written?",
+                        options: ["EPH", "COF", "EPG", "DPH"],
+                        correct: 0,
+                        explanation: "Each letter moves +1 position"
+                    },
+                    {
+                        title: "Coding Pattern",
+                        text: "In a certain code:",
+                        premise: "'MIND' is coded as '7394'",
+                        question: "How is 'KIND' coded?",
+                        options: ["5394", "6394", "5493", "6493"],
+                        correct: 0,
+                        explanation: "M=7, I=3, N=9, D=4, so K=5"
+                    },
+                    {
+                        title: "Reverse Code",
+                        text: "In a code language:",
+                        premise: "'WATER' is written as 'RETAW'",
+                        question: "How is 'HOUSE' written?",
+                        options: ["ESUOH", "HOUSE", "HSUOE", "OSUEH"],
+                        correct: 0,
+                        explanation: "Letters are written in reverse order"
+                    },
+                    {
+                        title: "Number Code",
+                        text: "In a certain code:",
+                        premise: "A=1, B=2, C=3... 'BAD' = 214",
+                        question: "What is 'FACE'?",
+                        options: ["6135", "6153", "6315", "5316"],
+                        correct: 0,
+                        explanation: "F=6, A=1, C=3, E=5"
+                    },
+                    
+                    // Syllogisms (26-50)
+                    {
+                        title: "Statement and Conclusion",
+                        text: "Statement: All roses are flowers. Some flowers are red.",
+                        premise: "",
+                        question: "Which conclusion follows?",
+                        options: [
+                            "All roses are red",
+                            "Some roses may be red", 
+                            "No roses are red",
+                            "All flowers are roses"
+                        ],
+                        correct: 1,
+                        explanation: "Some roses may be red is the only valid conclusion"
+                    },
+                    {
+                        title: "Logical Deduction",
+                        text: "If all cats are animals and some animals are pets:",
+                        premise: "",
+                        question: "Which statement is definitely true?",
+                        options: [
+                            "All cats are pets",
+                            "Some cats are pets",
+                            "All cats are animals",
+                            "No cats are pets"
+                        ],
+                        correct: 2,
+                        explanation: "All cats are animals is given in the premise"
+                    },
+                    {
+                        title: "Syllogism",
+                        text: "All birds can fly. Penguin is a bird.",
+                        premise: "",
+                        question: "What can we conclude?",
+                        options: [
+                            "Penguin can fly",
+                            "Penguin cannot fly",
+                            "Some birds cannot fly",
+                            "The premise is wrong"
+                        ],
+                        correct: 3,
+                        explanation: "The premise contradicts reality"
+                    },
+                    {
+                        title: "Logical Statement",
+                        text: "All students are intelligent. Ram is intelligent.",
+                        premise: "",
+                        question: "What can we conclude?",
+                        options: [
+                            "Ram is a student",
+                            "Ram may be a student",
+                            "Ram is not a student",
+                            "All intelligent are students"
+                        ],
+                        correct: 1,
+                        explanation: "Ram could be intelligent without being a student"
+                    },
+                    {
+                        title: "Conditional Logic",
+                        text: "If it rains, then the ground gets wet.",
+                        premise: "The ground is wet.",
+                        question: "What can we conclude?",
+                        options: [
+                            "It rained",
+                            "It may have rained",
+                            "It didn't rain",
+                            "Nothing definite"
+                        ],
+                        correct: 1,
+                        explanation: "Ground can be wet due to other reasons too"
+                    },
+                    
+                    // Number Series (51-75)
+                    {
+                        title: "Number Series",
+                        text: "Find the next number in the series:",
+                        premise: "2, 6, 12, 20, 30, ?",
+                        question: "What comes next?",
+                        options: ["40", "42", "44", "46"],
+                        correct: 1,
+                        explanation: "Pattern: n(n+1) where n = 1,2,3,4,5,6"
+                    },
+                    {
+                        title: "Pattern Recognition",
+                        text: "Find the next in series:",
+                        premise: "1, 4, 9, 16, 25, ?",
+                        question: "What comes next?",
+                        options: ["30", "36", "35", "49"],
+                        correct: 1,
+                        explanation: "Perfect squares: 1², 2², 3², 4², 5², 6²"
+                    },
+                    {
+                        title: "Number Logic",
+                        text: "Find the missing number:",
+                        premise: "3, 7, 15, 31, ?",
+                        question: "What comes next?",
+                        options: ["63", "47", "55", "62"],
+                        correct: 0,
+                        explanation: "Pattern: 2n+1 (3→7→15→31→63)"
+                    },
+                    {
+                        title: "Arithmetic Series",
+                        text: "Find the next number:",
+                        premise: "5, 11, 17, 23, ?",
+                        question: "What comes next?",
+                        options: ["29", "27", "31", "25"],
+                        correct: 0,
+                        explanation: "Add 6 each time"
+                    },
+                    {
+                        title: "Fibonacci Pattern",
+                        text: "Find the next number:",
+                        premise: "1, 1, 2, 3, 5, 8, ?",
+                        question: "What comes next?",
+                        options: ["11", "13", "15", "10"],
+                        correct: 1,
+                        explanation: "Each number is sum of previous two"
+                    },
+                    
+                    // Letter Series & Logic (76-100)
+                    {
+                        title: "Letter Series",
+                        text: "Find the next letter:",
+                        premise: "A, D, G, J, ?",
+                        question: "What comes next?",
+                        options: ["K", "L", "M", "N"],
+                        correct: 2,
+                        explanation: "Skip 2 letters each time: A(+3)D(+3)G(+3)J(+3)M"
+                    },
+                    {
+                        title: "Logical Reasoning",
+                        text: "If A > B and B > C:",
+                        premise: "",
+                        question: "Which is definitely true?",
+                        options: ["A = C", "A < C", "A > C", "Cannot determine"],
+                        correct: 2,
+                        explanation: "Transitive property: A > B > C means A > C"
+                    },
+                    {
+                        title: "Logical Puzzle",
+                        text: "In a family of 6 members:",
+                        premise: "A is older than B. C is younger than D. B is older than C.",
+                        question: "Who is the youngest?",
+                        options: ["A", "B", "C", "Cannot determine"],
+                        correct: 2,
+                        explanation: "From given: A>B>C and D>C, so C is youngest"
+                    },
+                    {
+                        title: "Mathematical Logic",
+                        text: "If x + 5 = 12:",
+                        premise: "",
+                        question: "What is 2x + 3?",
+                        options: ["17", "15", "19", "14"],
+                        correct: 0,
+                        explanation: "x = 7, so 2x + 3 = 14 + 3 = 17"
+                    },
+                    {
+                        title: "Logic Gates",
+                        text: "If P is true and Q is false:",
+                        premise: "",
+                        question: "What is P AND Q?",
+                        options: ["True", "False", "Cannot determine", "Both"],
+                        correct: 1,
+                        explanation: "AND gate: both must be true for true result"
+                    }
+                ];
+                
+                const q = questions[Math.floor(Math.random() * questions.length)];
+                this.currentQuestion = q;
+                
+                this.questionTitle.textContent = q.title;
+                this.questionText.textContent = q.text;
+                
+                const contentHTML = `
+                    <div class="chart-container">
+                        ${q.premise ? `<p style="font-size: 1.2rem; margin-bottom: 15px; color: #495057;"><strong>${q.premise}</strong></p>` : ''}
+                        <p style="font-size: 1.1rem; color: #666; margin-bottom: 20px; font-style: italic;">
+                            ${q.explanation ? 'Hint: Think step by step' : ''}
+                        </p>
+                    </div>
+                    <p class="question-text"><strong>${q.question}</strong></p>
+                `;
+                
+                this.questionContent.innerHTML = contentHTML;
+                this.createOptions(q.options, q.correct);
+            }
+            
+            generateBloodRelationQuestion() {
+                const questions = [
+                    // Basic Relations (1-25)
+                    {
+                        title: "Blood Relations",
+                        text: "Family relationship puzzle:",
+                        premise: "A is B's father. B is C's mother. D is C's brother.",
+                        question: "How is A related to D?",
+                        options: ["Father", "Grandfather", "Uncle", "Brother"],
+                        correct: 1,
+                        explanation: "A is grandfather of D"
+                    },
+                    {
+                        title: "Photo Description",
+                        text: "Looking at a photo, Sita said:",
+                        premise: "'He is the son of my father's only daughter.'",
+                        question: "How is the boy related to Sita?",
+                        options: ["Son", "Nephew", "Brother", "Cousin"],
+                        correct: 0,
+                        explanation: "Father's only daughter is Sita herself, so he is her son"
+                    },
+                    {
+                        title: "Simple Relations",
+                        text: "In a family:",
+                        premise: "A is B's mother. C is B's father.",
+                        question: "How is C related to A?",
+                        options: ["Brother", "Husband", "Father", "Son"],
+                        correct: 1,
+                        explanation: "C is A's husband"
+                    },
+                    {
+                        title: "Sibling Relations",
+                        text: "Family puzzle:",
+                        premise: "P and Q are brothers. R is P's son.",
+                        question: "How is Q related to R?",
+                        options: ["Father", "Uncle", "Brother", "Grandfather"],
+                        correct: 1,
+                        explanation: "Q is R's uncle"
+                    },
+                    {
+                        title: "Parent-Child",
+                        text: "In a family:",
+                        premise: "M is N's daughter. O is M's son.",
+                        question: "How is N related to O?",
+                        options: ["Father", "Grandfather", "Uncle", "Grandmother"],
+                        correct: 1,
+                        explanation: "N is O's grandfather"
+                    },
+                    
+                    // Complex Relations (26-50)
+                    {
+                        title: "Complex Relations",
+                        text: "Pointing to a photograph, Ram said:",
+                        premise: "'She is the daughter of my grandfather's only son.'",
+                        question: "How is the girl related to Ram?",
+                        options: ["Sister", "Daughter", "Niece", "Cousin"],
+                        correct: 0,
+                        explanation: "Grandfather's only son is Ram's father, so she is Ram's sister"
+                    },
+                    {
+                        title: "Family Tree",
+                        text: "In a family:",
+                        premise: "P is Q's brother. R is Q's mother. S is R's father. T is S's mother.",
+                        question: "How is T related to P?",
+                        options: ["Grandmother", "Great-grandmother", "Mother", "Aunt"],
+                        correct: 1,
+                        explanation: "T is great-grandmother of P"
+                    },
+                    {
+                        title: "Relationship Puzzle",
+                        text: "M said to N:",
+                        premise: "'Your mother's husband's sister is my aunt.'",
+                        question: "How is M related to N?",
+                        options: ["Cousin", "Brother", "Uncle", "Nephew"],
+                        correct: 0,
+                        explanation: "N's mother's husband is N's father, whose sister is M's aunt, making M and N cousins"
+                    },
+                    {
+                        title: "Indirect Relations",
+                        text: "Ravi said:",
+                        premise: "'She is the wife of my father's brother.'",
+                        question: "How is the woman related to Ravi?",
+                        options: ["Mother", "Aunt", "Sister", "Cousin"],
+                        correct: 1,
+                        explanation: "Father's brother's wife is aunt"
+                    },
+                    {
+                        title: "Generation Gap",
+                        text: "Family relations:",
+                        premise: "A is B's daughter. C is A's mother. D is C's father.",
+                        question: "How is D related to B?",
+                        options: ["Father", "Grandfather", "Great-grandfather", "Uncle"],
+                        correct: 2,
+                        explanation: "D is great-grandfather of B"
+                    },
+                    
+                    // Marriage Relations (51-75)
+                    {
+                        title: "Marriage Relations",
+                        text: "In a family:",
+                        premise: "P is married to Q. R is P's brother. S is R's wife.",
+                        question: "How is S related to Q?",
+                        options: ["Sister", "Sister-in-law", "Cousin", "Aunt"],
+                        correct: 1,
+                        explanation: "S is wife of Q's husband's brother, so sister-in-law"
+                    },
+                    {
+                        title: "In-Law Relations",
+                        text: "Family connections:",
+                        premise: "A marries B. C is A's sister. D is C's husband.",
+                        question: "How is D related to B?",
+                        options: ["Brother-in-law", "Brother", "Cousin", "Uncle"],
+                        correct: 0,
+                        explanation: "D is B's brother-in-law"
+                    },
+                    {
+                        title: "Wedding Relations",
+                        text: "At a wedding:",
+                        premise: "The bride is the groom's sister's daughter.",
+                        question: "What is the relationship?",
+                        options: ["Cousin marriage", "Uncle-niece", "Brother-sister", "Father-daughter"],
+                        correct: 1,
+                        explanation: "Groom is uncle to the bride (his sister's daughter)"
+                    },
+                    {
+                        title: "Mother-in-Law",
+                        text: "Family relations:",
+                        premise: "X marries Y. Z is Y's mother.",
+                        question: "How is Z related to X?",
+                        options: ["Mother", "Mother-in-law", "Aunt", "Sister"],
+                        correct: 1,
+                        explanation: "Z is X's mother-in-law"
+                    },
+                    {
+                        title: "Son-in-Law",
+                        text: "In a family:",
+                        premise: "P's daughter marries Q. R is P's son.",
+                        question: "How is Q related to R?",
+                        options: ["Brother", "Brother-in-law", "Cousin", "Uncle"],
+                        correct: 1,
+                        explanation: "Q is R's brother-in-law"
+                    },
+                    
+                    // Extended Family (76-100)
+                    {
+                        title: "Complex Family",
+                        text: "In a joint family:",
+                        premise: "A's son is B. B's sister is C. C's mother is D.",
+                        question: "How is A related to D?",
+                        options: ["Husband", "Brother", "Father", "Son"],
+                        correct: 0,
+                        explanation: "A and D are parents of B and C, so they are husband-wife"
+                    },
+                    {
+                        title: "Cousin Relations",
+                        text: "Family puzzle:",
+                        premise: "M's father and N's mother are siblings.",
+                        question: "How are M and N related?",
+                        options: ["Siblings", "Cousins", "Uncle-Nephew", "Parent-Child"],
+                        correct: 1,
+                        explanation: "Children of siblings are cousins"
+                    },
+                    {
+                        title: "Three Generations",
+                        text: "In a family:",
+                        premise: "P is Q's grandfather. R is P's son. S is R's daughter.",
+                        question: "How is S related to Q?",
+                        options: ["Sister", "Cousin", "Aunt", "Niece"],
+                        correct: 1,
+                        explanation: "S and Q are both grandchildren of P, so they are cousins"
+                    },
+                    {
+                        title: "Mother's Side",
+                        text: "Pointing to a man, Rita said:",
+                        premise: "'He is the brother of my mother's father.'",
+                        question: "How is the man related to Rita?",
+                        options: ["Uncle", "Grand-uncle", "Father", "Grandfather"],
+                        correct: 1,
+                        explanation: "Mother's father's brother is grand-uncle"
+                    },
+                    {
+                        title: "Only Child",
+                        text: "Family statement:",
+                        premise: "A has no siblings. B is A's son. C is B's sister.",
+                        question: "How is C related to A?",
+                        options: ["Daughter", "Niece", "Sister", "Cousin"],
+                        correct: 0,
+                        explanation: "C is A's daughter (B's sister means same parents)"
+                    }
+                ];
+                
+                const q = questions[Math.floor(Math.random() * questions.length)];
+                this.currentQuestion = q;
+                
+                this.questionTitle.textContent = q.title;
+                this.questionText.textContent = q.text;
+                
+                const contentHTML = `
+                    <div class="chart-container">
+                        <p style="font-size: 1.2rem; margin-bottom: 15px; color: #495057; text-align: center;">
+                            <strong>"${q.premise}"</strong>
+                        </p>
+                        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <p style="text-align: center; color: #666; font-style: italic;">
+                                💡 Tip: Draw a family tree to visualize the relationships
+                            </p>
+                        </div>
+                    </div>
+                    <p class="question-text"><strong>${q.question}</strong></p>
+                `;
+                
+                this.questionContent.innerHTML = contentHTML;
+                this.createOptions(q.options, q.correct);
+            }
+            
+            generateDirectionQuestion() {
+                const questions = [
+                    // Basic Movement (1-25)
+                    {
+                        title: "Direction Sense",
+                        text: "Movement tracking:",
+                        premise: "A man walks 5km North, then 3km East, then 5km South.",
+                        question: "How far is he from the starting point?",
+                        options: ["3km", "5km", "8km", "13km"],
+                        correct: 0,
+                        explanation: "He ends up 3km East of starting point"
+                    },
+                    {
+                        title: "Simple Path",
+                        text: "Basic movement:",
+                        premise: "Walk 4km North, then 3km South.",
+                        question: "How far are you from start?",
+                        options: ["1km North", "7km", "1km South", "At start"],
+                        correct: 0,
+                        explanation: "Net movement: 4N - 3S = 1km North"
+                    },
+                    {
+                        title: "East-West Movement",
+                        text: "Horizontal movement:",
+                        premise: "Go 6km East, then 2km West.",
+                        question: "Final position from start?",
+                        options: ["4km East", "8km East", "4km West", "At start"],
+                        correct: 0,
+                        explanation: "Net: 6E - 2W = 4km East"
+                    },
+                    {
+                        title: "Circular Movement",
+                        text: "Round trip:",
+                        premise: "Walk 3km East, 4km North, 3km West, 4km South.",
+                        question: "Where are you now?",
+                        options: ["Starting point", "3km East", "4km North", "7km away"],
+                        correct: 0,
+                        explanation: "You return to the starting point"
+                    },
+                    {
+                        title: "L-Shaped Path",
+                        text: "Two-direction movement:",
+                        premise: "Walk 8km North, then 6km East.",
+                        question: "Straight-line distance from start?",
+                        options: ["10km", "14km", "8km", "6km"],
+                        correct: 0,
+                        explanation: "Using Pythagoras: √(8² + 6²) = 10km"
+                    },
+                    
+                    // Direction Changes (26-50)
+                    {
+                        title: "Compass Directions",
+                        text: "Direction puzzle:",
+                        premise: "If you are facing North and turn 90° clockwise, then 180° anticlockwise.",
+                        question: "Which direction are you facing now?",
+                        options: ["North", "South", "East", "West"],
+                        correct: 3,
+                        explanation: "North → East (90° clockwise) → West (180° anticlockwise)"
+                    },
+                    {
+                        title: "Right Turn Navigation",
+                        text: "Direction changes:",
+                        premise: "Starting from North, make 3 right turns.",
+                        question: "Which direction are you facing?",
+                        options: ["North", "South", "East", "West"],
+                        correct: 3,
+                        explanation: "North → East → South → West (3 right turns)"
+                    },
+                    {
+                        title: "Left Turn Series",
+                        text: "Direction sequence:",
+                        premise: "Facing South, make 2 left turns.",
+                        question: "Which direction now?",
+                        options: ["North", "South", "East", "West"],
+                        correct: 0,
+                        explanation: "South → East → North (2 left turns)"
+                    },
+                    {
+                        title: "Multiple Turns",
+                        text: "Complex navigation:",
+                        premise: "Face East, turn 45° right, then 90° left.",
+                        question: "Final direction?",
+                        options: ["North", "Northeast", "East", "Southeast"],
+                        correct: 1,
+                        explanation: "East → Southeast (45° right) → Northeast (90° left)"
+                    },
+                    {
+                        title: "Opposite Direction",
+                        text: "Direction reversal:",
+                        premise: "If you're going Northeast and turn around completely.",
+                        question: "Which direction are you facing?",
+                        options: ["Southwest", "Southeast", "Northwest", "Northeast"],
+                        correct: 0,
+                        explanation: "Opposite of Northeast is Southwest"
+                    },
+                    
+                    // Complex Paths (51-75)
+                    {
+                        title: "Complex Movement",
+                        text: "Path finding:",
+                        premise: "Ram starts from home, walks 4km South, 3km West, 4km North, then 7km East.",
+                        question: "In which direction is Ram from his home?",
+                        options: ["4km North", "4km East", "4km South", "4km West"],
+                        correct: 1,
+                        explanation: "Net displacement: 4km East from starting point"
+                    },
+                    {
+                        title: "Maze Navigation",
+                        text: "Step-by-step movement:",
+                        premise: "Go 2km North, 1km East, 2km South, 3km West.",
+                        question: "Final position from start?",
+                        options: ["2km West", "1km West", "At start", "2km East"],
+                        correct: 0,
+                        explanation: "Net movement: 0 North-South, 2km West (1E - 3W = -2W)"
+                    },
+                    {
+                        title: "Triangle Path",
+                        text: "Geometric movement:",
+                        premise: "Walk 5km East, 5km Northeast, then straight back to start.",
+                        question: "What direction is the final leg?",
+                        options: ["West", "Southwest", "Northwest", "South"],
+                        correct: 2,
+                        explanation: "To complete triangle, go Northwest to starting point"
+                    },
+                    {
+                        title: "Zigzag Movement",
+                        text: "Alternating directions:",
+                        premise: "Walk 3km North, 2km East, 1km South, 4km West.",
+                        question: "Final position?",
+                        options: ["2km North, 2km West", "2km South, 2km East", "1km North, 1km West", "At start"],
+                        correct: 0,
+                        explanation: "Net: 2km North (3N-1S), 2km West (2E-4W)"
+                    },
+                    {
+                        title: "Square Path",
+                        text: "Geometric pattern:",
+                        premise: "Walk 4km North, 4km East, 4km South, 2km West.",
+                        question: "How far from start?",
+                        options: ["2km East", "4km", "6km", "At start"],
+                        correct: 0,
+                        explanation: "Net: 0 North-South, 2km East (4E-2W)"
+                    },
+                    
+                    // Shadow & Time (76-100)
+                    {
+                        title: "Shadow Direction",
+                        text: "Time and direction:",
+                        premise: "At 6:00 AM, the shadow of a pole falls towards West.",
+                        question: "In which direction is the Sun?",
+                        options: ["North", "South", "East", "West"],
+                        correct: 2,
+                        explanation: "In morning, Sun is in East, so shadow falls towards West"
+                    },
+                    {
+                        title: "Clock Direction",
+                        text: "Time-based direction:",
+                        premise: "At 3 PM, your shadow points North.",
+                        question: "Where is the Sun?",
+                        options: ["North", "South", "East", "West"],
+                        correct: 1,
+                        explanation: "If shadow points North, Sun is in South"
+                    },
+                    {
+                        title: "Morning Shadow",
+                        text: "Early morning:",
+                        premise: "At sunrise, a tree's shadow falls towards Northwest.",
+                        question: "Where is the Sun?",
+                        options: ["Northeast", "Southeast", "Southwest", "Northwest"],
+                        correct: 1,
+                        explanation: "Sun is opposite to shadow direction"
+                    },
+                    {
+                        title: "Evening Shadow",
+                        text: "Late evening:",
+                        premise: "At sunset, your shadow points Northeast.",
+                        question: "Sun's position?",
+                        options: ["Northeast", "Southeast", "Southwest", "Northwest"],
+                        correct: 2,
+                        explanation: "Sun is in Southwest at sunset"
+                    },
+                    {
+                        title: "School to Home",
+                        text: "Daily route:",
+                        premise: "From school, walk 2km North, 1km West to reach home.",
+                        question: "From home to school, which direction first?",
+                        options: ["North", "South", "East", "West"],
+                        correct: 2,
+                        explanation: "Reverse the route: first go East, then South"
+                    }
+                ];
+                
+                const q = questions[Math.floor(Math.random() * questions.length)];
+                this.currentQuestion = q;
+                
+                this.questionTitle.textContent = q.title;
+                this.questionText.textContent = q.text;
+                
+                const contentHTML = `
+                    <div class="chart-container">
+                        <p style="font-size: 1.2rem; margin-bottom: 20px; color: #495057;">
+                            <strong>${q.premise}</strong>
+                        </p>
+                        <div style="display: flex; justify-content: center; margin: 20px 0;">
+                            <div style="width: 200px; height: 200px; border: 2px solid #495057; border-radius: 50%; position: relative; background: #f8f9fa;">
+                                <div style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); font-weight: bold; color: #495057;">N</div>
+                                <div style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); font-weight: bold; color: #495057;">E</div>
+                                <div style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); font-weight: bold; color: #495057;">S</div>
+                                <div style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); font-weight: bold; color: #495057;">W</div>
+                                <div style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: #495057; border-radius: 50%; transform: translate(-50%, -50%);"></div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; color: #666; font-style: italic;">
+                            🧭 Use the compass to visualize the movement
+                        </p>
+                    </div>
+                    <p class="question-text"><strong>${q.question}</strong></p>
+                `;
+                
+                this.questionContent.innerHTML = contentHTML;
+                this.createOptions(q.options, q.correct);
+            }
+            
+            generatePartnershipQuestion() {
+                const investments = [5000, 8000, 10000, 12000, 15000, 20000, 25000, 30000];
+                const timeA = [6, 8, 10, 12][Math.floor(Math.random() * 4)];
+                const timeB = [4, 6, 8, 10][Math.floor(Math.random() * 4)];
+                const timeC = [3, 6, 9, 12][Math.floor(Math.random() * 4)];
+                const investA = investments[Math.floor(Math.random() * investments.length)];
+                const investB = investments[Math.floor(Math.random() * investments.length)];
+                const investC = investments[Math.floor(Math.random() * investments.length)];
+                const profit = [2400, 3600, 4800, 6000, 7200, 9600, 12000][Math.floor(Math.random() * 7)];
+                
+                const ratioA = investA * timeA;
+                const ratioB = investB * timeB;
+                const ratioC = investC * timeC;
+                const totalRatio = ratioA + ratioB;
+                const totalRatio3 = ratioA + ratioB + ratioC;
+                const shareA = Math.round((profit * ratioA) / totalRatio);
+                const shareB = profit - shareA;
+                const shareA3 = Math.round((profit * ratioA) / totalRatio3);
+                
+                const questions = [
+                    // Basic Partnership (1-25)
+                    {
+                        title: "Partnership Profit Sharing",
+                        text: `Two partners A and B invest ₹${investA} and ₹${investB} respectively.`,
+                        premise: `A invests for ${timeA} months and B invests for ${timeB} months. Total profit is ₹${profit}.`,
+                        question: "What is A's share in the profit?",
+                        options: [
+                            `₹${shareA}`,
+                            `₹${shareA + 200}`,
+                            `₹${shareA - 200}`,
+                            `₹${shareB}`
+                        ],
+                        correct: 0
+                    },
+                    {
+                        title: "Investment Ratio",
+                        text: `In a partnership business:`,
+                        premise: `A invests ₹${investA} for ${timeA} months, B invests ₹${investB} for ${timeB} months.`,
+                        question: "What is the ratio of their investments?",
+                        options: [
+                            `${ratioA}:${ratioB}`,
+                            `${investA}:${investB}`,
+                            `${timeA}:${timeB}`,
+                            `${ratioB}:${ratioA}`
+                        ],
+                        correct: 0
+                    },
+                    {
+                        title: "Equal Investment Different Time",
+                        text: `A and B invest equal amounts of ₹10000 each.`,
+                        premise: `A invests for 8 months, B invests for 12 months. Total profit is ₹5000.`,
+                        question: "What is B's share?",
+                        options: ["₹3000", "₹2500", "₹2000", "₹3500"],
+                        correct: 0
+                    },
+                    {
+                        title: "Different Investment Equal Time",
+                        text: `A invests ₹15000 and B invests ₹25000.`,
+                        premise: `Both invest for the same period. Total profit is ₹8000.`,
+                        question: "What is A's share?",
+                        options: ["₹3000", "₹4000", "₹5000", "₹2000"],
+                        correct: 0
+                    },
+                    {
+                        title: "Simple Ratio",
+                        text: `A and B start a business.`,
+                        premise: `A invests ₹6000, B invests ₹9000. Profit is ₹3000.`,
+                        question: "What is A's share?",
+                        options: ["₹1200", "₹1500", "₹1800", "₹1000"],
+                        correct: 0
+                    },
+                    
+                    // Three Partner Business (26-50)
+                    {
+                        title: "Three Partner Business",
+                        text: `Three partners A, B, and C start a business.`,
+                        premise: `A invests ₹${investA} for ${timeA} months, B invests ₹${investB} for ${timeB} months, C invests ₹${investC} for ${timeC} months. Profit is ₹${profit}.`,
+                        question: "What is A's share?",
+                        options: [
+                            `₹${shareA3}`,
+                            `₹${shareA3 + 300}`,
+                            `₹${shareA3 - 300}`,
+                            `₹${Math.round(profit/3)}`
+                        ],
+                        correct: 0
+                    },
+                    {
+                        title: "Compound Partnership",
+                        text: `A, B, C invest ₹8000, ₹12000, ₹16000 respectively.`,
+                        premise: `A for 12 months, B for 9 months, C for 6 months. Total profit ₹9600.`,
+                        question: "What is C's share?",
+                        options: ["₹2400", "₹3200", "₹1600", "₹4800"],
+                        correct: 0
+                    },
+                    {
+                        title: "Three Equal Partners",
+                        text: `A, B, C invest ₹10000 each.`,
+                        premise: `A for 12 months, B for 8 months, C for 6 months. Profit ₹6500.`,
+                        question: "What is B's share?",
+                        options: ["₹2000", "₹2500", "₹3000", "₹1500"],
+                        correct: 0
+                    },
+                    {
+                        title: "Unequal Partnership",
+                        text: `Three partners with different investments:`,
+                        premise: `A: ₹5000 for 10 months, B: ₹8000 for 6 months, C: ₹12000 for 4 months. Profit ₹4800.`,
+                        question: "What is the ratio A:B:C?",
+                        options: ["50:48:48", "5:8:12", "10:6:4", "Equal"],
+                        correct: 0
+                    },
+                    {
+                        title: "Partnership Calculation",
+                        text: `A invests ₹20000, B invests ₹30000, C invests ₹40000.`,
+                        premise: `All for same time period. Total profit ₹18000.`,
+                        question: "What is A's share?",
+                        options: ["₹4000", "₹6000", "₹8000", "₹5000"],
+                        correct: 0
+                    },
+                    
+                    // Working Partners (51-75)
+                    {
+                        title: "Working Partner",
+                        text: `A invests ₹12000, B invests ₹18000.`,
+                        premise: `A also works and gets 10% of profit as salary. Total profit is ₹6000.`,
+                        question: "What is A's total share (investment + salary)?",
+                        options: ["₹3000", "₹2400", "₹3600", "₹2800"],
+                        correct: 0
+                    },
+                    {
+                        title: "Active vs Sleeping Partner",
+                        text: `A is active partner, B is sleeping partner.`,
+                        premise: `A invests ₹12000, B invests ₹18000. A gets 20% extra for managing. Profit is ₹6000.`,
+                        question: "What is A's total share?",
+                        options: ["₹3600", "₹2400", "₹4200", "₹3000"],
+                        correct: 0
+                    },
+                    {
+                        title: "Management Fee",
+                        text: `A and B are partners.`,
+                        premise: `A: ₹15000, B: ₹25000. A gets ₹500 monthly as management fee. Profit after 12 months is ₹8000.`,
+                        question: "What is A's total earning?",
+                        options: ["₹9000", "₹8500", "₹7500", "₹9500"],
+                        correct: 0
+                    },
+                    {
+                        title: "Working Capital",
+                        text: `A provides working capital and management.`,
+                        premise: `A: ₹10000 + 15% management fee, B: ₹20000. Profit ₹6000.`,
+                        question: "A's total share?",
+                        options: ["₹2900", "₹2000", "₹3000", "₹2500"],
+                        correct: 0
+                    },
+                    {
+                        title: "Salary Plus Profit",
+                        text: `Partnership with salary arrangement:`,
+                        premise: `A: ₹8000 investment + ₹1000/month salary, B: ₹16000 investment. Annual profit ₹7200.`,
+                        question: "A's total annual earning?",
+                        options: ["₹14400", "₹12000", "₹15600", "₹13200"],
+                        correct: 0
+                    },
+                    
+                    // Complex Scenarios (76-100)
+                    {
+                        title: "Partnership Loss",
+                        text: `A and B are partners with investments ₹20000 and ₹30000.`,
+                        premise: `They invest for 6 months each. Total loss is ₹5000.`,
+                        question: "What is A's share of loss?",
+                        options: ["₹2000", "₹3000", "₹2500", "₹1500"],
+                        correct: 0
+                    },
+                    {
+                        title: "Joining Later",
+                        text: `A starts business with ₹10000.`,
+                        premise: `B joins after 4 months with ₹15000. Total profit after 12 months is ₹4800.`,
+                        question: "What is B's share?",
+                        options: ["₹2400", "₹2000", "₹3000", "₹1800"],
+                        correct: 0
+                    },
+                    {
+                        title: "Withdrawing Capital",
+                        text: `A invests ₹20000 for full year.`,
+                        premise: `B invests ₹30000 but withdraws ₹10000 after 6 months. Profit is ₹7200.`,
+                        question: "What is the ratio of their profits?",
+                        options: ["4:5", "2:3", "3:4", "1:1"],
+                        correct: 0
+                    },
+                    {
+                        title: "Variable Investment",
+                        text: `A invests ₹10000 initially, adds ₹5000 after 6 months.`,
+                        premise: `B invests ₹18000 for full 12 months. Total profit ₹6000.`,
+                        question: "What is A's share?",
+                        options: ["₹2500", "₹3000", "₹2000", "₹3500"],
+                        correct: 0
+                    },
+                    {
+                        title: "Partnership with Interest",
+                        text: `A lends ₹25000 to partnership at 8% interest.`,
+                        premise: `A also invests ₹15000 as capital. B invests ₹20000. Profit before interest is ₹8000.`,
+                        question: "What is A's total earning (profit + interest)?",
+                        options: ["₹5400", "₹4800", "₹6000", "₹4200"],
+                        correct: 0
+                    }
+                ];
+                
+                const q = questions[Math.floor(Math.random() * questions.length)];
+                this.currentQuestion = q;
+                
+                this.questionTitle.textContent = q.title;
+                this.questionText.textContent = q.text;
+                
+                const formulaHTML = `
+                    <div class="chart-container">
+                        <h4 style="text-align: center; margin-bottom: 15px; color: #495057;">Partnership Formula:</h4>
+                        <p style="text-align: center; font-size: 1.1rem; margin-bottom: 15px;">
+                            <strong>Profit Ratio = (Investment × Time) : (Investment × Time)</strong>
+                        </p>
+                        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <p><strong>Given:</strong></p>
+                            <p>A's Investment = ₹${investA}, Time = ${timeA} months</p>
+                            <p>B's Investment = ₹${investB}, Time = ${timeB} months</p>
+                            ${q.title.includes('Profit') ? `<p>Total Profit = ₹${profit}</p>` : ''}
+                        </div>
+                        <p style="margin-top: 15px; font-size: 1.1rem;">
+                            <strong>${q.premise}</strong>
+                        </p>
+                    </div>
+                    <p class="question-text"><strong>${q.question}</strong></p>
+                `;
+                
+                this.questionContent.innerHTML = formulaHTML;
+                this.createOptions(q.options, q.correct);
+            }
+            
+            updateStats() {
+                this.scoreEl.textContent = this.score;
+                this.correctEl.textContent = this.correct;
+                this.totalEl.textContent = this.total;
+                
+                const accuracy = this.total > 0 ? Math.round((this.correct / this.total) * 100) : 0;
+                this.accuracyEl.textContent = `${accuracy}%`;
+                
+                const progress = this.total > 0 ? (this.correct / this.total) * 100 : 0;
+                this.progressEl.style.width = `${progress}%`;
+            }
+            
+            resetGame() {
+                this.score = 0;
+                this.correct = 0;
+                this.total = 0;
+                this.currentCategory = null;
+                this.selectedAnswer = null;
+                
+                this.categoryBtns.forEach(btn => btn.classList.remove('active'));
+                this.questionContainer.classList.remove('active');
+                this.nextBtn.style.display = 'none';
+                
+                this.messageEl.textContent = 'Choose a category to start practicing!';
+                this.messageEl.className = 'message info';
+                
+                this.updateStats();
+            }
+        }
+        
+        // Initialize the game when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new AptitudeGame();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9812cf3dc64e1f33',t:'MTc1ODIxOTEyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
